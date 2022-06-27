@@ -1,0 +1,16 @@
+{
+  "name": "idparser",
+  "version": "1.0.0",
+  "description": "tesaract ocr engine to read ID ocr characters",
+  "main": "server.m   npm run js",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Pablo Ortega",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "tesseract.js": "^2.1.5"
+  }
+}

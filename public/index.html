@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type href="favicon.svg" type="image/svg+xml">
+    <!-- <script src='https://unpkg.com/tesseract.js@v2.0.0-beta.1/dist/tesseract.min.js'></script> -->
+    <!-- <script src='https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js'></script> -->
+    <script src='tess/tesseract.min.js'></script>
+    <script>
+
+
+    </script>
+    <title>Tesaract test</title>
+
+    <style>
+        /* video {
+            max-width: 100vw;
+            max-height: 100vh;
+        } */
+        /* {
+            width: 100vw;
+            max-width: 100%;
+            align-items: center;
+        } */
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-flow: column;
+            flex-wrap: nowrap;
+            margin: 0;
+            align-items: center;
+        }
+
+        .content {
+            display: flex;
+            flex-flow: column;
+            flex-wrap: nowrap;
+            /* justify-content: center; */
+            align-items: center;
+            justify-content: space-evenly;
+            flex-grow: 1;
+        }
+
+        .menu {
+            display: flex;
+            flex-flow: row;
+            flex-wrap: wrap;
+
+
+        }
+
+        .menu>* {
+            margin: 5px;
+        }
+
+        #ocrOutput {
+            display: inline-flex;
+            flex-direction: column;
+        }
+
+        @media all and (min-width: 900px) {
+            canvas {
+
+                width: 50vw;
+            }
+        }
+
+        @media all and (max-width: 900px) {
+            canvas {
+
+                width: 100vw;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <noscript>
+        <strong>We're sorry but tesseract-app doesn't work properly without JavaScript enabled. Please enable it to
+            continue.</strong>
+    </noscript>
+    <div class="content">
+        <canvas id="htmlCanvas"></canvas>
+
+
+
+        <div id="ocrOutput"></div>
+        <div id="ocrSource"></div>
+    </div>
+    <div id="status"> <progress id="p" value="0" max="1"></progress></div>
+    <div class="menu">
+        <button onclick="takePicture()">Take a picture</button>
+        <button onclick="GetOCR()">GetOCR</button>
+        <button onclick="reDraw()">Redraw</button>
+        <button onclick="ReTake()">ReTake</button>
+        <input type="file" onchange="directInput()"></input>
+    </div>
+
+</body>
+<script async src="js/index.js"></script>
+
+</html>
