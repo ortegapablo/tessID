@@ -131,7 +131,7 @@ async function getOCR(imgScr) {
 function OCRoutput(r) {
     let ctx = tempCanvas.getContext('2d');
     console.log(`Resultado: ${r.text}`, r);
-
+    while (document.getElementById('ocrOutput').firstChild && document.getElementById('ocrOutput').removeChild(document.getElementById('ocrOutput').firstChild));
     r.words.forEach(w => {
         let ip = document.createElement('input');
         ip.size = 31
