@@ -6,26 +6,33 @@ let tempCanvas = document.createElement('canvas');
 let OCRarea = {};
 let intervalID
 let d
+document.getElementById('takePitcure').addEventListener('click', takePicture)
+document.getElementById('GetOCR').addEventListener('click', GetOCR)
+document.getElementById('reDraw').addEventListener('click', reDraw)
+document.getElementById('reTake').addEventListener('click', ReTake)
+document.getElementById('loader').addEventListener('change', directInput)
 const { createWorker, setLogging } = Tesseract;
 setLogging(true);
-const worker = createWorker({
+
+const worker = await createWorker('mrzf', 1, {
     workerPath: 'tess/worker.min.js',
     langPath: 'tess',
-    corePath: 'tess/tesseract-core.wasm.js',
+    corePath: 'tess',
     cacheMethod: 'none',
     logger: progress,
     errorHandler: err => console.error(err),
 });
+
 (async () => {
-    await worker.load('testJob');
-    await worker.loadLanguage('mrzf');
-    await worker.initialize('mrzf');
+    /*  await worker.load('testJob');
+        await worker.loadLanguage('mrzf');
+        await worker.initialize('mrzf'); */
     await worker.setParameters({
         // tessedit_char_whitelist: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ<',
         // tessedit_pageseg_mode: 'PSM_OSD_ONLY',
         tessedit_pageseg_mode: '11',
-        tessedit_ocr_engine_mode: '3',
-        tessjs_create_osd: '',
+        //tessedit_ocr_engine_mode: '0',
+        //tessjs_create_osd: '',
 
     });
     console.log('worker cargado')
@@ -118,40 +125,54 @@ function GetOCR() {
 };
 
 async function getOCR(imgScr) {
-
+    const outputOpts = {
+        text: true,
+        blocks: true,
+        hocr: false,
+        tsv: false,
+        box: false,
+        unlv: false,
+        osd: false,
+        pdf: false,
+        imageColor: true,
+        imageGrey: true,
+        imageBinary: true,
+        debug: false
+    };
     console.log('Ocr iniciado');
-    const { data } = await worker.recognize(imgScr);
-    d = data
+    const { data } = await worker.recognize(imgScr, {}, outputOpts);
     OCRoutput(data);
-
     //document.getElementById('ocrOutput').innerHTML += data.text;
     //await worker.terminate();
 };
 
 function OCRoutput(r) {
     let ctx = tempCanvas.getContext('2d');
+    let target = document.getElementById('ocrOutput');
     console.log(`Resultado: ${r.text}`, r);
-    while (document.getElementById('ocrOutput').firstChild && document.getElementById('ocrOutput').removeChild(document.getElementById('ocrOutput').firstChild));
-    r.words.forEach(w => {
+    while (target.firstChild) {
+        target.removeChild(target.firstChild)
+    };
+    r.blocks.forEach(w => {
         let ip = document.createElement('input');
-        ip.size = 31
+        ip.size = 40
         ip.value = w.text
         document.getElementById('ocrOutput').appendChild(ip)
         //document.getElementById('ocrOutput').append(`<p>${w.text}</p>`)
         ctx.lineWidth = 3;
         ctx.strokeStyle = 'red'
         ctx.strokeRect(w.bbox.x0, w.bbox.y0, w.bbox.x1 - w.bbox.x0, w.bbox.y1 - w.bbox.y0)
-        ctx.beginPath()
-        ctx.moveTo(w.baseline.x0, w.baseline.y0)
-        ctx.lineTo(w.baseline.x1, w.baseline.y1)
-        ctx.strokeStyle = 'green'
-        ctx.stroke()
+        /*         ctx.beginPath()
+                ctx.moveTo(w.baseline.x0, w.baseline.y0)
+                ctx.lineTo(w.baseline.x1, w.baseline.y1)
+                ctx.strokeStyle = 'green'
+                ctx.stroke() */
     });
 
 };
 
 
-lienzo.addEventListener('pointerup', () => { pointer.down = false });
+lienzo.addEventListener('pointerup', () => { pointer.down = false; GetOCR() });
 lienzo.addEventListener('pointerout', () => { pointer.down = false });
 lienzo.addEventListener('pointerdown', e => {
     console.log(e)
@@ -185,48 +206,7 @@ lienzo.addEventListener('pointermove', e => {
     }
 });
 
-
-
-
-
-
 let rasterSave = { base: lienzo.getContext('2d').getImageData(0, 0, lienzo.width, lienzo.height), current: lienzo.getContext('2d').getImageData(0, 0, lienzo.width, lienzo.height) }
-//console.log(lienzo.getBoundingClientRect().left)
-// const mouseFunctHandler = function (e) {
-//     mouse.down = false;
-// };
-// lienzo.addEventListener('mouseup', () => { mouse.down = false });
-// lienzo.addEventListener('mouseout', () => { mouse.down = false });
-// lienzo.addEventListener('mousedown', e => {
-//     lienzo.getContext('2d').putImageData(rasterSave.base, 0, 0);
-//     mouse.cssScaleX = lienzo.width / lienzo.offsetWidth;
-//     mouse.cssScaleY = lienzo.height / lienzo.offsetHeight;
-//     mouse.sx = parseInt(e.clientX - lienzo.offsetLeft) * mouse.cssScaleX;
-//     mouse.sy = e.offsetY * mouse.cssScaleY; //change clienty to offsety in case of scroll
-//     mouse.down = true;
-//     rasterSave.current = lienzo.getContext('2d').getImageData(0, 0, lienzo.width, lienzo.height)
-// });
-// lienzo.addEventListener('mousemove', e => {
-//     lienzo.style.cursor = 'crosshair'
-//     let ctx = lienzo.getContext('2d');
-//     mouse.cx = parseInt(e.clientX - lienzo.offsetLeft) * mouse.cssScaleX;
-//     mouse.cy = e.offsetY * mouse.cssScaleY; //change clienty to offsety in case of scroll
-//     if (mouse.down) {
-//         ctx.putImageData(rasterSave.current, 0, 0);
-//         let ancho = mouse.cx - mouse.sx;
-//         let alto = mouse.cy - mouse.sy;
-//         ctx.beginPath();
-//         //ctx.clearRect(0, 0, canvas.width, canvas.height);
-//         ctx.rect(mouse.sx, mouse.sy, ancho, alto);
-//         OCRarea = { x: mouse.sx, y: mouse.sy, ancho, alto };
-//         ctx.strokeStyle = "yellow";
-//         ctx.lineWidth = 3;
-//         ctx.stroke();
-//     }
-// });
-
-
-
 
 function thresholdFilter(pixels, level) {
     if (level === undefined) {
@@ -258,15 +238,13 @@ function progress(log) {
 
 function directInput() {
     document.contains(canvas) ? canvas.replaceWith(lienzo) : null;
-    let f = document.getElementsByTagName('input')[0]
+    let f = document.getElementById('loader')
     let reader = new FileReader();
     reader.addEventListener('load', function (e) {
         let ctx = lienzo.getContext('2d');
         let img = new Image();
         img.src = e.target.result;
         img.addEventListener('load', () => {
-            //clearInterval(intervalID)
-
             lienzo.width = img.naturalWidth
             lienzo.height = img.naturalHeight
             ctx.drawImage(img, 0, 0);
@@ -313,4 +291,4 @@ function directInput() {
 //     { logger: m => console.log(m) }
 // ).then(({ data: { text } }) => {
 //     console.log(text);
-// })
+// }) 

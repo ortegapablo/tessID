@@ -9,6 +9,7 @@
     <!-- <script src='https://unpkg.com/tesseract.js@v2.0.0-beta.1/dist/tesseract.min.js'></script> -->
     <!-- <script src='https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js'></script> -->
     <script src='tess/tesseract.min.js'></script>
+
     <script>
 
 
@@ -92,14 +93,14 @@
     </div>
     <div id="status"> <progress id="p" value="0" max="1"></progress></div>
     <div class="menu">
-        <button onclick="takePicture()">Take a picture</button>
-        <button onclick="GetOCR()">GetOCR</button>
-        <button onclick="reDraw()">Redraw</button>
-        <button onclick="ReTake()">ReTake</button>
-        <input type="file" onchange="directInput()"></input>
+        <button id="takePitcure">Take a picture</button>
+        <button id="GetOCR">GetOCR</button>
+        <button id="reDraw">Redraw</button>
+        <button id="reTake">ReTake</button>
+        <input id="loader" type="file"></input>
     </div>
 
 </body>
-<script async src="js/index.js"></script>
+<script type="module" src="js/index.js"></script>
 
 </html>
