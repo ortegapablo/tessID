@@ -1,0 +1,12 @@
+{
+    "short_name": "ID Parser",
+    "start_url": "/",
+    "description": "Extrae la informción relevante de un DNI usando la zona legible por maquinas \"MRZ\" y la libreria tesserac.js",
+    "icons": [
+        {
+            "src": "favicon.svg",
+            "sizes": "512x512"
+        }
+    ],
+    "display": "standalone"
+}
